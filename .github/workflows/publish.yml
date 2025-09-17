@@ -34,7 +34,7 @@ jobs:
 
       - name: Install Python packages
         run: |
-          pip install jupyter matplotlib numpy pandas seaborn plotly kaleido
+          pip install -r requirements.txt
 
       - name: Render Quarto Project
         uses: quarto-dev/quarto-actions/render@v2
