@@ -1,0 +1,34 @@
+---
+title: "Welcome to My Quarto Blog"
+listing:
+  contents: posts
+  sort: "date desc"
+  type: default
+  categories: true
+  sort-ui: false
+  filter-ui: false
+page-layout: full
+title-block-banner: true
+---
+
+Welcome to my personal blog! This is where I share my thoughts, projects, and learnings.
+
+## Latest Posts
+
+This section will automatically display your latest blog posts. To add a new post:
+
+1. Create a new `.qmd` file in the `posts/` directory
+2. Add the appropriate YAML frontmatter
+3. Write your content
+4. Render the site with `quarto render`
+
+## Getting Started
+
+To get started with your own Quarto blog:
+
+- Edit this `index.qmd` file to customize your homepage
+- Modify `_quarto.yml` to change site settings
+- Add your posts in the `posts/` directory
+- Customize the styling in `styles.css`
+
+Happy blogging!

@@ -1,0 +1,31 @@
+/* Custom styles for the Quarto blog */
+
+/* Add some custom styling for the blog */
+.quarto-title-banner {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Customize code blocks */
+pre {
+  border-radius: 8px;
+}
+
+/* Style the post cards */
+.card {
+  transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Custom styling for the navbar */
+.navbar-brand {
+  font-weight: bold;
+}
+
+/* Footer styling */
+.nav-footer {
+  border-top: 1px solid #e9ecef;
+}

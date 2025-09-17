@@ -1,0 +1,31 @@
+project:
+  type: website
+
+website:
+  title: "Junaid's Blog"
+  description: "A personal blog built with Quarto"
+  site-url: "https://junaidmb.github.io"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - about.qmd
+    right:
+      - icon: github
+        href: https://github.com/junaidmb
+  page-footer:
+    left: "© 2024 Junaid's Blog"
+    right:
+      - text: "Built with Quarto"
+        href: https://quarto.org/
+
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    toc: true
+    code-copy: true
+    code-overflow: wrap
+
+execute:
+  freeze: auto
