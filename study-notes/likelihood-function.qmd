@@ -1,0 +1,168 @@
+---
+title: "Statistical Inference - The Likelihood Function"
+author: "Junaid Butt"
+date: today
+categories: [statistical inference, fundamentals]
+---
+
+# Introductory Concepts
+
+In the field of statistics, researchers are interested in making inferences from data. The data is collected from a population; the data drawn from a population is called a sample. In a statistical experiment we consider taking a data sample from some infinite population, where each sample member/ unit is associated with an observed value of some variable. In frequentist statistics, the concept of an infinite population is adopted so we can assume that observations may be drawn repeatedly without limit. 
+
+Once we have a particular data sample, experiments can be performed to make inferences about features about the population from which a given data sample is drawn. Fundamentally speaking, the feature of a population that a researcher is interested in making inferences about is called a parameter. In frequentist statistics a parameter is never observed and is estimated by a probability model. 
+
+Let the vector $\textbf{X} = (X_1,...,X_n)$ denote observations from a data sample of size $n$. Each time a sample is taken, the set of observations could vary in a random manner from repetition to repetition when drawing the sample. Since there is some random variability in this process, each individual observed value $X_i$ is called a random variable. A vector of these random variables/ observations is a called a random vector $\textbf{X}$. 
+
+Since a random variable $X$ has a probability function associated with it, so too does a vector of random variables. A random vector $\textbf{X}$ is assumed to have a joint probability density function (pdf) $\{f(\textbf{x}; \theta), \textbf{x} \in \chi \}$ where $\chi$ denotes the set of all possible values that the random vector $\textbf{X}$ can take.  The joint pdf $$\{f(\textbf{x}; \theta), \textbf{x} \in \chi \}$$ depends on a vector of $q$ parameters $\theta = (\theta_1,..., \theta_q)$. Some or all of the parameters will be unknown - the purpose of a sampling experiment will be to make inferences about the unknown parameters. Let the vector $\textbf{x} = (x_1,...,x_n)$ represent observed sample value obtained on one particular occasion when an experiment is carried out. Going forward, random variables will be denoted by upper case letters and realisations of random variables will be denoted by lower case letters. Furthermore the function $f(\textbf{x};\theta)$ will be used to for both continuous and discrete random variables. 
+
+Usually samples taken will be random. Given that we are sampling from an infinite population, it implies that given a parameter $\theta$; the random variables $X_1,...,X_n$ are independent and identically distributed (i.i.d) such that their joint pdf can be factorised as 
+
+$$f(\textbf{x}; \theta) = \prod_{i=1}^{n} f(x_i; \theta)$$
+
+where $f(x_i; \theta)$ is the marginal pdf of a single random variable $X_i$, $i = 1,...,n$. Independence allows us to multiply the pdfs of each random variable together and identical distribution means that each random variable has the same function form which means that the joint pdf has the same functional form as a single random variable.
+
+Given the vector of parameters $\mathbf{\theta}$, the joint pdf $f(\textbf{X};\theta)$ as a function of $\textbf{X}$ describes the probability law according to which the values of the observations $\textbf{X}$ vary from repetition to repetition of the sampling experiment. In statistical inference we are concerned with how we can take a particular vector of sample values $\textbf{x}$ observed on some particular occasion and make inferences about the unknown parameters $\theta$. 
+
+# The Likelihood Function
+
+A fundamental role in the theory of statistical inference is played by the likelihood function. Given a particular vector of observed values $\textbf{x}$, the likelihood function $L(\theta; \textbf{x})$ is the joint probability density function $f(\textbf{x}; \theta)$ but the change in notation considers the pdf as a function of the parameter $\theta$. Hence
+
+$$L(\theta; \textbf{x}) = f(\textbf{x}; \theta)$$
+
+The likelihood function is an expression of the relative likelihood of the various possible values of the parameter $\theta$ which could have given rise to the observed vector of observations $\textbf{x}$. Given a statistical model, we are comparing how good an explanation the different values of $\theta$ provide for the observed data we see $\textbf{x}$. In other words, given that we observe some data, what is the probability distribution which is most likely to have given rise to the data that we observe? Often it will be useful to speak about the likelihood function $L(\theta; \textbf{x})$ and its logarithm - the log likelihood function $l = ln(L(\theta; \textbf{x}))$. 
+
+
+**Example 1**: Consider a random sample $X_1,...,X_n$ of size $n$ from a normal distribution, $N(\mu, \sigma^2)$. In this case the parameters of the probability distribution are $\theta = (\mu, \sigma^2)$. The joint pdf (which is identical to the likelihood function) is given by
+
+
+$$L(\mu, \sigma^2; \textbf{x}) = f(\textbf{x}; \mu, \sigma^2) = \prod_{i=1}^{n} \frac{1}{\sqrt{2\pi\sigma^2}} exp[-\frac{1}{2\sigma^2} (x_i - \mu)^2]$$
+
+
+$$L(\mu, \sigma^2; \textbf{x}) = \frac{1}{(2\pi\sigma^2)^{\frac{n}{2}}} exp[-\frac{1}{2\sigma^2} \sum_{i = 1}^{n}(x_i - \mu)^2] \rightarrow \text{The Likelihood Function}$$
+
+- Taking logarithms gives the log likelihood function
+
+$$l = ln[L(\mu, \sigma; \textbf{x})] = -\frac{n}{2}ln(2\pi\sigma^2) - \frac{1}{2\sigma^2}\sum_{i=1}^{n}(x_i - \mu)^2$$
+
+# The Method of Maximum Likelihood
+
+Suppose that the random variables $X_1,...,X_n$ form a random sample from a pdf $f(\textbf{x}; \theta)$. For any observed vector $\textbf{x} = (x_1,...,x_n)$ in the sample, the value of the joint pdf is denoted by $f(\textbf{x}; \theta)$ which is identical to the likelihood function. It is of interest for us to know which parameter value $$\theta$, makes the likelihood of the observed value $\textbf{x}$ the highest it can be - the maximum. In other words, for any given observed vector $\textbf{x}$, we are led to consider a value of $\theta$ for which the likelihood function $L(\theta; \textbf{x})$ is a maximum and we use this value to obtain an estimate of $\theta$, $\hat{\theta}$. 
+
+The estimator $\hat{\theta}$ is called the maximum likelihood estimator (MLE) of $\theta$. It should be noted that for certain observed vectors $\textbf{x}$, the maximum value of $L(\theta; \textbf{x})$ may not actually be obtained. In such a case, the MLE does not exist. For other observed vectors $\textbf{x}$, the maximum value of $L(\theta; \textbf{x})$ may be obtained for multiple value of $\theta$. In such a case the MLE is not uniquely defined and any one of these $\theta$ values can be taken to be a MLE $\hat{\theta}$.
+
+
+## Finding a Maximum Likelihood Estimator
+
+Assuming that the likelihood function  $L(\theta; \textbf{x})$ is a continuous differentiable function of $\theta$, a stationary point of  $L(\theta; \textbf{x})$ or  $l = ln[L(\mu, \sigma; \textbf{x})]$ is given by a solution of the likelihood equations
+
+$$ 
+\begin{equation}\tag{1}
+\frac{\partial ln[L(\mu, \sigma; \textbf{x})]}{\partial \theta_j} = 0 
+\end{equation}
+$$
+
+where  $j = 1,...,q$
+
+The solution of (1) may or may not be unique and may or may not be a MLE. We can check that the solution of (1) gives at least a local maximum of the likelihood function. If $L(\theta; \textbf{x})$ is twice continuously differentiable, the criteria is to check that the Hessian matrix (matrix of second order partial derivatives) is negative at a solution point. This however does not ensure that we have a global maximum. 
+
+If we want to obtain a maximum likelihood estimator for a given random sample with an (i.i.d) random variables with pdf $f(\textbf{x}; \theta)$ the general procedure we adopt is
+
+
+1. Find the likelihood function which is the product of the individual pdf for a single random variable that are (i.i.d)
+
+
+$$L(\theta; \textbf{x}) = \prod_{i=1}^{n} f(x_i; \theta)$$
+
+
+2. Apply a logarithm on the function to obtain the log likelihood function
+
+
+$$l = ln[L(\mu, \sigma; \textbf{x})]$$
+
+
+3. Compute the partial derivative of the log likelihood function with respect to the parameter of interest, $\theta_j$, and equate to zero
+
+
+$$\frac{\partial l}{\partial \theta_j} = 0$$
+
+
+4. Rearrange the resultant expression to make $\theta_j$ the subject of the equation to obtain the MLE $\hat{\theta}(\textbf{X})$.
+
+## Worked Examples
+
+**Example 2**: Find the maximum likelihood estimator of the parameter $p \in (0,1)$ based on a random sample $X_1,...,X_n$ of size $n$ drawn from the Binomial distribution $Bin(m, p)$ where $m$ is the number of trials and $p$ is the probability of success. 
+
+
+$$f(x;p) = {m \choose x}p^x(1-p)^{m-x}$$  
+
+where $x = 0,...,m$
+
+Find the likelihood function (multiply the above pdf by itself $$n$$ times and simplify)
+
+$$L(p;\textbf{x}) = \prod_{i=1}^{n}{m \choose x_i}p^{x_i}(1-p)^{m-x_i} = [\prod_{i=1}^{n} {m \choose x_i}]p^{\sum_{i=1}^{n}x_i}(1-p)^{nm - \sum_{i=1}^{n}x_i}$$
+
+Apply logarithms 
+
+$$l = ln[L(p;\textbf{x})] = c + \sum_{i=1}^{n}x_iln(p) + (nm - \sum_{i=1}^{n}x_i)ln(1-p)$$
+
+where $c = ln[\prod_{i=1}^{n} {m \choose x_i}]$
+
+Compute a partial derivative with respect to $$p$$ and equate to zero
+
+$$\frac{\partial l}{\partial p} = \frac{\sum_{i=1}^{n}x_i}{p} - \frac{nm = \sum_{i=1}^{n}x_i}{1-p} = 0$$
+
+Make $p$ the subject of the above equation
+
+$$p = \frac{\sum_{i=1}^{n}x_i}{mn}$$
+
+Since $p$ is an estimate, it is more correct to write
+
+$$\hat{p} = \frac{\sum_{i=1}^{n}x_i}{mn} = n \cdot \bar{x}$$ 
+
+where $\bar{x} = \frac{\sum_{i=1}^{n}x_i}{n}$
+
+
+**Example 3**: Let $X_1,...,X_n$ denote a random sample of size $$n$$ from the Poisson distribution with unknown parameter $\mu > 0$ such that for each $i = 1,...,n$. Find the MLE $\hat{\theta(\textbf{X})}$.
+
+The Poisson pdf for the $i$-th sample member is $f(x_i; \mu) = e^{-\mu}\frac{\mu^{x_i}}{x_i!}$
+
+Find the likelihood function (multiply the above pdf by itself $n$ times and simplify)
+
+$$L(\mu; \textbf{x}) = \prod_{i=1}^{n}(e^{-\mu}\frac{\mu^{x_i}}{x_i!}) = e^{-n\mu}\frac{\mu^{\sum_{i=1}^{n}x_i}}{\prod_{i=1}^{n} x_i!}$$
+
+Apply logarithms 
+
+$$l = ln[L(\mu;\textbf{x})] = -n\mu + \sum_{i=1}^{n}x_i ln(\mu) - \sum_{i=1}^{n}ln(x_i!)$$
+
+Compute a partial derivative with respect to $\mu$ and equate to zero
+
+$$\frac{\partial l}{\partial \mu} = -n + \frac{\sum_{i=1}^{n}x_i}{\mu} = 0$$
+
+Make $\mu$ the subject of the above equation
+
+$$\hat{\mu} = \frac{\sum_{i=1}^{n}x_i}{n} = \bar{x}$$
+
+
+**Example 4**: Suppose that $X_1,...,X_n$ form a random sample from a normal distribution for which the mean $\theta = \mu$ is unknown but the variance $\sigma^2$ is known. Find the MLE for $\mu$.
+
+The Normal pdf for the $i$-th sample member is 
+$$f(x_i; \mu) = \frac{1}{\sqrt{2\pi\sigma^2}} exp[-\frac{1}{2\sigma^2} (x_i - \mu)^2]$$
+
+Find the likelihood function (multiply the above pdf by itself $$n$$ times and simplify)
+
+$$L(\mu, \sigma^2; \textbf{x}) = \frac{1}{(2\pi\sigma^2)^{\frac{n}{2}}} exp[-\frac{1}{2\sigma^2} \sum_{i = 1}^{n}(x_i - \mu)^2]$$ 
+
+Since $\sigma^2$ is known, we treat it as a constant
+
+Apply logarithms 
+
+$$l = ln[L(\mu;\textbf{x})] = -\frac{n}{2}ln(2\pi\sigma^2)-\frac{1}{2\sigma^2}\sum_{i=1}^{n}(x_i - \mu)^2$$
+
+Compute a partial derivative with respect to $\mu$ and equate to zero
+
+$$\frac{\partial l}{\partial \mu} = \frac{1}{\sigma^2}\sum_{i=1}^{n}(x_i - \mu) = 0$$
+
+Make $\mu$ the subject of the above equation
+
+$$\hat{\mu} = \frac{\sum_{i=1}^{n}x_i}{n} = \bar{x}$$
+

@@ -31,4 +31,4 @@ Here is what you'll find on this blog:
 
 - General Blog Posts usually about technical topics relating to AI or Software in the [**Blog**](https://junaidmb.github.io/blog.html) page
 - Foundational study notes that are fundamental in the [**Study Notes**](https://junaidmb.github.io/study-notes.html) page
-- [Cheatsheets](https://junaidmb.github.io/cheatsheets.html) I've accumulated along the way that makes development easier
+- [**Cheatsheets**](https://junaidmb.github.io/cheatsheets.html) I've accumulated along the way that makes development easier
