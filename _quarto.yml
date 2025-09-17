@@ -9,10 +9,19 @@ website:
     left:
       - href: index.qmd
         text: Home
-      - about.qmd
+      - href: about.qmd
+        text: About Me
+      - href: index.qmd
+        text: Blog
+      - href: study-notes.qmd
+        text: Study Notes
+      - href: cheatsheets.qmd
+        text: Cheatsheets
     right:
       - icon: github
-        href: https://github.com/junaidmb
+        href: https://github.com/JunaidMB
+      - icon: linkedin
+        href: https://linkedin.com/in/placeholder
   page-footer:
     left: "© 2024 Junaid's Blog"
     right:

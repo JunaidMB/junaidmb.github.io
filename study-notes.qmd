@@ -1,0 +1,39 @@
+---
+title: "Study Notes"
+page-layout: full
+toc: true
+---
+
+# Study Notes
+
+Welcome to my study notes section! Here you'll find comprehensive notes on various topics I'm learning and exploring.
+
+## Categories
+
+### Machine Learning & AI
+- Deep Learning fundamentals
+- Neural Networks architectures
+- Natural Language Processing
+- Computer Vision techniques
+
+### Software Engineering
+- Design patterns and best practices
+- System design principles
+- Database optimization
+- API development
+
+### Data Science
+- Statistical analysis methods
+- Data visualization techniques
+- Exploratory data analysis
+- Feature engineering
+
+### Programming Languages
+- Python advanced concepts
+- JavaScript frameworks
+- SQL optimization
+- R for data analysis
+
+---
+
+*Notes are continuously updated as I learn new concepts and techniques. Check back regularly for fresh content!*

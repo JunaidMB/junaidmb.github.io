@@ -1,42 +1,57 @@
 ---
 title: "About"
-image: profile.jpg
-about:
-  template: jolla
-  links:
-    - icon: twitter
-      text: Twitter
-      href: https://twitter.com/yourusername
-    - icon: linkedin
-      text: LinkedIn
-      href: https://linkedin.com/in/yourusername
-    - icon: github
-      text: Github
-      href: https://github.com/yourusername
-    - icon: envelope
-      text: Email
-      href: mailto:your.email@example.com
+page-layout: full
+title-block-banner: true
 ---
 
-## Hello!
+::: {.column-page}
 
-Welcome to my blog! I'm passionate about [your interests/field] and love sharing my experiences and learnings.
+<div class="about-container">
 
-## Background
+<div class="profile-section">
+<img src="https://via.placeholder.com/300x300/9A7BB0/ffffff?text=Your+Photo" alt="Profile Photo" class="profile-image">
+</div>
 
-[Write a brief description about yourself, your background, interests, and what readers can expect from your blog]
+<div class="about-content">
+
+# About
+
+Hi! My name is Junaid, and I'm a **Software Developer** and **Data Science Enthusiast** 🚀. I have a passion for building innovative solutions and exploring the intersection of technology and data.
+
+I have a strong interest in **Machine Learning**, **Web Development**, and **Open Source** projects. As a result, you'll find articles about various technical topics, project showcases, study notes, and useful cheatsheets for fellow developers.
+
+My background spans across:
+- **Software Development** with experience in modern web technologies
+- **Data Science** and machine learning applications
+- **Open Source** contributions and community involvement
+- **Continuous Learning** in emerging technologies
 
 ## What You'll Find Here
 
-On this blog, I write about:
+On this blog, I share:
 
-- [Topic 1]
-- [Topic 2]
-- [Topic 3]
-- [Topic 4]
+- **Technical tutorials** and in-depth guides
+- **Project showcases** from my development work
+- **Study notes** on various CS and data science topics
+- **Cheatsheets** for quick reference
+- **Insights** from my learning journey
 
-## Get in Touch
+---
 
-I'd love to hear from you! Feel free to reach out via any of the social links above or send me an email.
+<div class="newsletter-section">
+<a href="#" class="newsletter-btn">Subscribe To My Newsletter</a>
+</div>
 
-Thanks for visiting!
+</div>
+
+</div>
+
+:::
+
+<div class="sidebar-toc">
+
+### On this page
+- [About](#about)
+- [What You'll Find Here](#what-youll-find-here)
+
+</div>

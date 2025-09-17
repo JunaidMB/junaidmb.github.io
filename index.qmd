@@ -1,5 +1,5 @@
 ---
-title: "Welcome to My Quarto Blog"
+title: "Junaid's Blog"
 listing:
   contents: posts
   sort: "date desc"
@@ -11,24 +11,76 @@ page-layout: full
 title-block-banner: true
 ---
 
-Welcome to my personal blog! This is where I share my thoughts, projects, and learnings.
+::: {.column-page}
 
-## Latest Posts
+<div class="hero-section">
 
-This section will automatically display your latest blog posts. To add a new post:
+# Welcome to My Blog!
 
-1. Create a new `.qmd` file in the `posts/` directory
-2. Add the appropriate YAML frontmatter
-3. Write your content
-4. Render the site with `quarto render`
+I'm a **Software Developer** and **Data Science Enthusiast** passionate about building innovative solutions and sharing knowledge with the developer community.
 
-## Getting Started
+Here you'll find technical tutorials, project showcases, study notes, and useful cheatsheets covering topics in software development, machine learning, and emerging technologies.
 
-To get started with your own Quarto blog:
+</div>
 
-- Edit this `index.qmd` file to customize your homepage
-- Modify `_quarto.yml` to change site settings
-- Add your posts in the `posts/` directory
-- Customize the styling in `styles.css`
+:::
 
-Happy blogging!
+## My blogs
+
+<div class="sidebar-toc">
+
+### On this page
+- [My blogs](#my-blogs)
+- [Outside Articles and Posts](#outside-articles-and-posts)
+- [Scientific Publications](#scientific-publications)
+- [Courses](#courses)
+- [Open Source Software Libraries](#open-source-software-libraries)
+- [Open Source Contributions](#open-source-contributions)
+
+</div>
+
+## Outside Articles and Posts
+
+Here are some of my featured articles published on external platforms:
+
+- **Medium**: Technical deep-dives and tutorials
+- **Dev.to**: Community-focused development content
+- **Personal Projects**: Open source contributions and showcases
+
+*Check back regularly for updates on my latest publications and contributions!*
+
+## Scientific Publications
+
+Academic papers and research contributions:
+
+- Research in machine learning applications
+- Data science methodologies
+- Software engineering best practices
+
+## Courses
+
+Educational content and course materials I've developed:
+
+- **Python for Data Science**: Comprehensive guide from basics to advanced
+- **Web Development Fundamentals**: Modern web technologies and frameworks
+- **Machine Learning Essentials**: Practical ML implementation
+
+## Open Source Software Libraries
+
+Libraries and tools I've contributed to the open source community:
+
+- **Data processing utilities**
+- **Web development frameworks**
+- **Machine learning tools**
+
+## Open Source Contributions
+
+My contributions to popular open source projects:
+
+- Bug fixes and feature implementations
+- Documentation improvements
+- Community support and mentoring
+
+---
+
+*This blog is continuously updated with new content. Subscribe to stay informed about the latest posts and updates!*
