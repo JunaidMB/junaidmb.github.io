@@ -1,0 +1,64 @@
+---
+title: "Machine Learning Basics"
+author: "Junaid Butt"
+date: "2024-01-20"
+categories: [machine learning, fundamentals]
+description: "Fundamental concepts in machine learning and key algorithms."
+---
+
+# Machine Learning Basics
+
+## Introduction
+
+Machine Learning is a subset of artificial intelligence that focuses on algorithms that can learn and make decisions from data.
+
+## Key Concepts
+
+### Supervised Learning
+- **Definition**: Learning with labeled training data
+- **Examples**: Classification, Regression
+- **Algorithms**:
+  - Linear Regression
+  - Decision Trees
+  - Random Forest
+  - Support Vector Machines
+
+### Unsupervised Learning
+- **Definition**: Learning patterns from unlabeled data
+- **Examples**: Clustering, Dimensionality Reduction
+- **Algorithms**:
+  - K-Means Clustering
+  - Hierarchical Clustering
+  - PCA (Principal Component Analysis)
+
+### Reinforcement Learning
+- **Definition**: Learning through interaction with environment
+- **Examples**: Game playing, Robot navigation
+- **Key concepts**: Agent, Environment, Reward, Policy
+
+## Model Evaluation
+
+### Cross-Validation
+```python
+from sklearn.model_selection import cross_val_score
+from sklearn.ensemble import RandomForestClassifier
+
+# 5-fold cross-validation
+scores = cross_val_score(RandomForestClassifier(), X, y, cv=5)
+print(f"Average accuracy: {scores.mean():.3f}")
+```
+
+### Metrics
+- **Classification**: Accuracy, Precision, Recall, F1-Score
+- **Regression**: MSE, RMSE, MAE, R²
+
+## Common Pitfalls
+
+1. **Overfitting**: Model performs well on training data but poorly on new data
+2. **Underfitting**: Model is too simple to capture underlying patterns
+3. **Data Leakage**: Using future information to predict the past
+4. **Biased Data**: Training data not representative of real-world scenarios
+
+---
+
+*Last updated: January 2024*

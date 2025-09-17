@@ -1,0 +1,218 @@
+---
+title: "Pandas Essentials Cheatsheet"
+author: "Junaid Butt"
+date: "2024-01-21"
+categories: [python, pandas, data science]
+description: "Essential Pandas operations for data manipulation and analysis."
+---
+
+# Pandas Essentials Cheatsheet
+
+## Importing and Basic Setup
+
+```python
+import pandas as pd
+import numpy as np
+
+# Display options
+pd.set_option('display.max_columns', None)
+pd.set_option('display.max_rows', 100)
+```
+
+## Reading Data
+
+```python
+# CSV files
+df = pd.read_csv('data.csv')
+df = pd.read_csv('data.csv', index_col=0, parse_dates=['date'])
+
+# Excel files
+df = pd.read_excel('data.xlsx', sheet_name='Sheet1')
+
+# JSON files
+df = pd.read_json('data.json')
+
+# From dictionary
+data = {'A': [1, 2, 3], 'B': [4, 5, 6]}
+df = pd.DataFrame(data)
+```
+
+## Basic Information
+
+```python
+# Shape and info
+df.shape                    # (rows, columns)
+df.info()                   # Data types and memory usage
+df.describe()               # Summary statistics
+df.dtypes                   # Data types
+
+# First/last rows
+df.head()                   # First 5 rows
+df.tail(10)                 # Last 10 rows
+df.sample(5)                # Random 5 rows
+```
+
+## Selecting Data
+
+```python
+# Single column
+df['column_name']
+df.column_name              # If no spaces in name
+
+# Multiple columns
+df[['col1', 'col2', 'col3']]
+
+# Rows by index
+df.iloc[0]                  # First row
+df.iloc[0:5]                # First 5 rows
+df.iloc[:, 0:3]             # First 3 columns
+
+# Rows by label
+df.loc['index_label']
+df.loc['label1':'label3']
+
+# Boolean indexing
+df[df['age'] > 25]
+df[(df['age'] > 25) & (df['city'] == 'NYC')]
+```
+
+## Data Cleaning
+
+```python
+# Missing values
+df.isnull().sum()           # Count nulls per column
+df.dropna()                 # Drop rows with any null
+df.dropna(subset=['col1'])  # Drop rows with null in col1
+df.fillna(0)                # Fill nulls with 0
+df.fillna(method='ffill')   # Forward fill
+df.fillna(df.mean())        # Fill with mean
+
+# Duplicates
+df.duplicated().sum()       # Count duplicates
+df.drop_duplicates()        # Remove duplicates
+df.drop_duplicates(subset=['col1'])  # Based on specific column
+```
+
+## Data Manipulation
+
+```python
+# Adding columns
+df['new_col'] = df['col1'] + df['col2']
+df['new_col'] = df['col1'].apply(lambda x: x * 2)
+
+# Renaming
+df.rename(columns={'old_name': 'new_name'})
+df.columns = ['new_col1', 'new_col2', 'new_col3']
+
+# Dropping columns/rows
+df.drop('column_name', axis=1)      # Drop column
+df.drop([0, 1, 2], axis=0)          # Drop rows by index
+
+# Sorting
+df.sort_values('column_name')
+df.sort_values(['col1', 'col2'], ascending=[True, False])
+df.sort_index()
+```
+
+## Grouping and Aggregation
+
+```python
+# Basic groupby
+df.groupby('category').mean()
+df.groupby('category')['value'].sum()
+
+# Multiple aggregations
+df.groupby('category').agg({
+    'value1': 'sum',
+    'value2': ['mean', 'std'],
+    'value3': 'count'
+})
+
+# Transform and apply
+df.groupby('category')['value'].transform('mean')
+df.groupby('category').apply(lambda x: x.describe())
+```
+
+## Merging and Joining
+
+```python
+# Concatenating
+pd.concat([df1, df2])              # Vertical
+pd.concat([df1, df2], axis=1)      # Horizontal
+
+# Merging
+pd.merge(df1, df2, on='key')       # Inner join
+pd.merge(df1, df2, on='key', how='left')
+pd.merge(df1, df2, left_on='key1', right_on='key2')
+
+# Join (index-based)
+df1.join(df2, how='inner')
+```
+
+## String Operations
+
+```python
+# String methods (use .str accessor)
+df['text'].str.lower()
+df['text'].str.upper()
+df['text'].str.contains('pattern')
+df['text'].str.replace('old', 'new')
+df['text'].str.split(',')
+df['text'].str.len()
+
+# Extract with regex
+df['text'].str.extract(r'(\d+)')
+```
+
+## Date and Time
+
+```python
+# Convert to datetime
+df['date'] = pd.to_datetime(df['date'])
+
+# Extract components
+df['year'] = df['date'].dt.year
+df['month'] = df['date'].dt.month
+df['day_name'] = df['date'].dt.day_name()
+
+# Date range
+pd.date_range('2023-01-01', periods=10, freq='D')
+
+# Resampling
+df.set_index('date').resample('M').mean()  # Monthly average
+```
+
+## Pivot Tables
+
+```python
+# Pivot table
+df.pivot_table(
+    values='value',
+    index='category',
+    columns='year',
+    aggfunc='mean'
+)
+
+# Pivot (no aggregation)
+df.pivot(index='date', columns='category', values='value')
+
+# Melt (unpivot)
+pd.melt(df, id_vars=['id'], value_vars=['col1', 'col2'])
+```
+
+## Export Data
+
+```python
+# To CSV
+df.to_csv('output.csv', index=False)
+
+# To Excel
+df.to_excel('output.xlsx', sheet_name='data', index=False)
+
+# To JSON
+df.to_json('output.json', orient='records')
+```
+
+---
+
+*Last updated: January 2024*

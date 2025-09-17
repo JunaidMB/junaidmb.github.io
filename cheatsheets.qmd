@@ -1,91 +1,23 @@
 ---
 title: "Cheatsheets"
+listing:
+  contents: cheatsheets
+  sort: "date desc"
+  type: default
+  categories: true
+  sort-ui: false
+  filter-ui: false
 page-layout: full
-toc: true
+title-block-banner: false
 ---
 
 # Cheatsheets
 
 Quick reference guides for various tools, languages, and frameworks I use regularly.
 
-## Programming Languages
+## Latest Cheatsheets
 
-### Python
-```python
-# List comprehensions
-numbers = [x for x in range(10) if x % 2 == 0]
-
-# Dictionary comprehensions
-squares = {x: x**2 for x in range(5)}
-
-# Lambda functions
-multiply = lambda x, y: x * y
-```
-
-### Git Commands
-```bash
-# Basic workflow
-git add .
-git commit -m "commit message"
-git push origin main
-
-# Branching
-git checkout -b new-branch
-git merge branch-name
-git branch -d branch-name
-```
-
-## Data Science Tools
-
-### Pandas Essentials
-```python
-import pandas as pd
-
-# Reading data
-df = pd.read_csv('file.csv')
-
-# Basic operations
-df.head()
-df.info()
-df.describe()
-df.groupby('column').mean()
-```
-
-### SQL Queries
-```sql
--- Basic SELECT
-SELECT column1, column2 FROM table_name WHERE condition;
-
--- Joins
-SELECT * FROM table1
-JOIN table2 ON table1.id = table2.id;
-
--- Aggregations
-SELECT COUNT(*), AVG(column) FROM table_name GROUP BY category;
-```
-
-## Development Tools
-
-### Docker Commands
-```bash
-# Build and run
-docker build -t image-name .
-docker run -p 8000:8000 image-name
-
-# Container management
-docker ps
-docker stop container-id
-docker rm container-id
-```
-
-### Linux Terminal
-```bash
-# File operations
-ls -la
-grep -r "pattern" .
-find . -name "*.py"
-chmod +x script.sh
-```
+This section automatically displays my latest cheatsheets. Each cheatsheet provides quick reference commands, code snippets, and best practices.
 
 ---
 
