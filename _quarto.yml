@@ -1,5 +1,8 @@
 project:
   type: website
+  render:
+    - "*.qmd"
+    - "!WRITER_GUIDE.md"
 
 website:
   title: "Junaid Butt"
