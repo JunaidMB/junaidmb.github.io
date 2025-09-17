@@ -1,104 +1,104 @@
 ---
 title: "Docker Commands Cheatsheet"
 author: "Junaid Butt"
-date: "2024-01-25"
+date: today
 categories: [docker, containers, devops]
 description: "Comprehensive Docker commands reference guide with setup, basic commands, Dockerfile, and Docker Compose."
----
 
-# Docker Commands Cheatsheet
+---
 
 ## Setup
 
-- Docker install via this link: https://hub.docker.com/editions/community/docker-ce-desktop-mac/
+- Docker install via this link: `https://hub.docker.com/editions/community/docker-ce-desktop-mac/`
 - Docker commands are run in the terminal
 
 ## Basic Docker Commands
 
-### 1. List Docker images
+1. List Docker images
+
 ```bash
 docker images
 ```
 
-### 2. List all running Docker containers
+2. List all running Docker containers
 ```bash
 docker ps
 ```
 
-### 3. Inspect a Docker container
+3. Inspect a Docker container
 ```bash
 docker inspect <container id/name>
 ```
 
-### 4. Print Docker container logs
+4. Print Docker container logs
 ```bash
 docker logs <container id/name>
 ```
 
-### 5. Run a docker image that doesn't persist
+5. Run a docker image that doesn't persist
 ```bash
 docker run --rm -p <port_on_container>:<port_on_local_machine> <image name>
 ```
 
-### 6. Mount a volume from a container to a local directory
+6. Mount a volume from a container to a local directory
 ```bash
 docker run -v <local directory>:<container directory> <image name>
 docker run --mount type=bind,source=/data/mysql,target=/var/lib/mysql <image name>
 ```
 
-### 7. Run a docker image with a place to save work in the container to the local machine
+7. Run a docker image with a place to save work in the container to the local machine
 ```bash
 docker run --rm -p <port_on_container>:<port_on_local_machine> -v <local_directory_to_save_work_to>:/home/rstudio/<container_directory_name_to_save_work_to> <image name>
 ```
 
-### 8. Save Docker image
+8. Save Docker image
 ```bash
 docker commit -m <commit message> <container id> <new image save name>
 ```
 
-### 9. Pull a docker image but don't run it
+9. Pull a docker image but don't run it
 ```bash
 docker pull <image name>
 ```
 
-### 10. Remove docker image
+10. Remove docker image
 ```bash
 docker image rm <image name>
 docker image rm <image ID>
 ```
 
-### 11. Remove dangling docker images: listed as `<none>:<none>`
+11. Remove dangling docker images: listed as `<none>:<none>`
 ```bash
 docker rmi $(docker images -f "dangling=true" -q)
 docker rmi $(docker images -f "dangling=true" -q) -f  # Force delete dangling images
 ```
 
-### 12. Save Docker image to tar file
+12. Save Docker image to tar file
 ```bash
 docker save <image name> > <image name>.tar
 ```
 
-### 13. Load Docker container from archived tar file
+13. Load Docker container from archived tar file
 ```bash
 docker load --input <image name>.tar
 ```
 
-### 14. Build Docker image specified in a Docker file
+14. Build Docker image specified in a Docker file
 ```bash
 docker build -t <name of image> .
 ```
 
-### 15. Build Docker image with a custom Dockerfile name
+15. Build Docker image with a custom Dockerfile name
 ```bash
 docker build -t <name of image>:<latest> -f <Dockerfile name> .
 ```
 
-### 16. Stop a running Docker container
+16. Stop a running Docker container
 ```bash
 docker stop <image ID>
 ```
 
-### 17. Access the Bash Shell in a running docker container
+17. Access the Bash Shell in a running docker container
 ```bash
 # 1. Run docker container
 docker run --rm -p <port_on_container>:<port_on_local_machine> <image name>
@@ -113,17 +113,17 @@ docker exec -it <container_name> /bin/bash
 # Press: Ctrl+D
 ```
 
-### 18. Run a docker container but does not attach container to terminal
+18. Run a docker container but does not attach container to terminal
 ```bash
 docker run -d <image name>
 ```
 
-### 19. Attach a running docker container to the current terminal
+19. Attach a running docker container to the current terminal
 ```bash
 docker attach <image name>
 ```
 
-### 20. Docker Debugging - Run & Exec in one step
+20. Docker Debugging - Run & Exec in one step
 ```bash
 docker run -it --entrypoint /bin/bash --rm --name <name_given_to_container> <image_name>:<tag>
 
@@ -131,7 +131,7 @@ docker run -it --entrypoint /bin/bash --rm --name <name_given_to_container> <ima
 docker run -it --entrypoint /bin/bash --rm --name runner geodn-runner:latest
 ```
 
-### 21. Providing build args to Docker via CLI
+21. Providing build args to Docker via CLI
 ```bash
 docker build --build-arg <ARG_NAME_IN_DOCKERFILE>=<token> -t <image_name>:<tag> .
 
@@ -139,17 +139,17 @@ docker build --build-arg <ARG_NAME_IN_DOCKERFILE>=<token> -t <image_name>:<tag> 
 docker build --build-arg GITHUB_TOKEN=<token> -t geodn-runner:latest .
 ```
 
-### 22. MultiPlatform Image support in Dockerfile
+22. MultiPlatform Image support in Dockerfile
 ```dockerfile
 FROM --platform=linux/amd64 python:3.8
 ```
 
-### 23. Prune Docker images
+23. Prune Docker images
 ```bash
 docker system prune --force
 ```
 
-### 24. Pulling and Pushing to remote registry
+24. Pulling and Pushing to remote registry
 ```bash
 # Login to Remote Registry
 docker login {registry_url}
@@ -342,10 +342,4 @@ docker-compose -f {docker_compose_filename} up
 docker-compose -f {docker_compose_filename} down
 ```
 
-## References
-
-1. [R Docker Tutorial](https://ropenscilabs.github.io/r-docker-tutorial/01-what-and-why.html)
-
 ---
-
-*Last updated: January 2024*
