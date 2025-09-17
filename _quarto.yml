@@ -23,11 +23,6 @@ website:
         href: https://github.com/JunaidMB
       - icon: linkedin
         href: https://linkedin.com/in/placeholder
-  page-footer:
-    left: "© 2024 Junaid Butt"
-    right:
-      - text: "Built with Quarto"
-        href: https://quarto.org/
 
 format:
   html:

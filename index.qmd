@@ -2,7 +2,7 @@
 title: "About"
 page-layout: full
 title-block-banner: false
-toc: false
+toc: true
 ---
 
 ::: {.column-page}
@@ -25,65 +25,10 @@ I have a heavy passion for **Deep Learning** and **Open Source** libraries. As a
 
 :::
 
-<div class="sidebar-toc">
+## What you'll find
 
-### On this page
-- [My blogs](#my-blogs)
-- [Outside Articles and Posts](#outside-articles-and-posts)
-- [Scientific Publications](#scientific-publications)
-- [Courses](#courses)
-- [Open Source Software Libraries](#open-source-software-libraries)
-- [Open Source Contributions](#open-source-contributions)
+Here is what you'll find on this blog:
 
-</div>
-
-## My blogs
-
-Here are some of my latest blog posts and technical articles:
-
-- **Technical tutorials** and in-depth guides
-- **Project showcases** from my development work
-- **Study notes** on various CS and data science topics
-- **Cheatsheets** for quick reference
-
-## Outside Articles and Posts
-
-Here are some of my featured articles published on external platforms:
-
-- **Medium**: Technical deep-dives and tutorials
-- **Dev.to**: Community-focused development content
-- **Personal Projects**: Open source contributions and showcases
-
-*Check back regularly for updates on my latest publications and contributions!*
-
-## Scientific Publications
-
-Academic papers and research contributions:
-
-- Research in machine learning applications
-- Data science methodologies
-- Software engineering best practices
-
-## Courses
-
-Educational content and course materials I've developed:
-
-- **Python for Data Science**: Comprehensive guide from basics to advanced
-- **Web Development Fundamentals**: Modern web technologies and frameworks
-- **Machine Learning Essentials**: Practical ML implementation
-
-## Open Source Software Libraries
-
-Libraries and tools I've contributed to the open source community:
-
-- **Data processing utilities**
-- **Web development frameworks**
-- **Machine learning tools**
-
-## Open Source Contributions
-
-My contributions to popular open source projects:
-
-- Bug fixes and feature implementations
-- Documentation improvements
-- Community support and mentoring
+- General Blog Posts usually about technical topics relating to AI or Software in the [**Blog**](https://junaidmb.github.io/blog.html) page
+- Foundational study notes that are fundamental in the [**Study Notes**](https://junaidmb.github.io/study-notes.html) page
+- [Cheatsheets](https://junaidmb.github.io/cheatsheets.html) I've accumulated along the way that makes development easier
