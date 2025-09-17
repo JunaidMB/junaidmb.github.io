@@ -1,0 +1,20 @@
+---
+title: "Blog"
+listing:
+  contents: posts
+  sort: "date desc"
+  type: default
+  categories: true
+  sort-ui: false
+  filter-ui: false
+page-layout: full
+title-block-banner: false
+---
+
+# Blog
+
+Welcome to my blog! Here you'll find my latest thoughts, tutorials, and insights on software development, machine learning, and technology.
+
+## Latest Posts
+
+This section automatically displays my latest blog posts. Each post covers technical topics, project showcases, and learning experiences.

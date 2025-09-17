@@ -8,10 +8,8 @@ website:
   navbar:
     left:
       - href: index.qmd
-        text: Home
-      - href: about.qmd
         text: About Me
-      - href: index.qmd
+      - href: blog.qmd
         text: Blog
       - href: study-notes.qmd
         text: Study Notes
