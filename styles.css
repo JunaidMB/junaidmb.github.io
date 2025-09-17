@@ -246,6 +246,16 @@ a:hover {
   color: var(--text-light);
 }
 
+/* Hide Quarto's built-in TOC elements */
+.toc-title,
+.table-of-contents,
+#toc,
+.quarto-toc,
+.toc-container,
+div[role="doc-toc"] {
+  display: none !important;
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
   .about-container {

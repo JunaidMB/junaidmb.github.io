@@ -33,7 +33,6 @@ format:
   html:
     theme: cosmo
     css: styles.css
-    toc: false
     code-copy: true
     code-overflow: wrap
 
