@@ -11,14 +11,6 @@ page-layout: full
 title-block-banner: false
 ---
 
-# Cheatsheets
-
-Quick reference guides for various tools, languages, and frameworks I use regularly.
-
-## Latest Cheatsheets
-
 This section automatically displays my latest cheatsheets. Each cheatsheet provides quick reference commands, code snippets, and best practices.
 
 ---
-
-*These cheatsheets are regularly updated with new commands and best practices I discover.*

@@ -3,7 +3,6 @@ title: "Welcome to My Blog!"
 author: "Your Name"
 date: "2024-01-15"
 categories: [news, introduction]
-image: "thumbnail.jpg"
 description: "My first blog post introducing myself and this new blog."
 ---
 

@@ -1,0 +1,30 @@
+---
+title: "Project Management with uv"
+author: "Junaid Butt"
+date: 2025-09-17
+categories: [python]
+description: "Essential environment management with uv."
+---
+
+1. Create new directory and initialise: `uv init {dir_name}`
+2. Initialise existing directory: `uv init`
+3. Initialise new directory which will be a module: `uv init {lib_name} --lib`
+4. Install libraries: `uv add lib1 lib2 … libn`
+5. Remove library: `uv remove lib1`
+6. View library dependency tree: `uv tree` 
+7. Execute script in working directory: `uv run {script_name}.py`
+8. Create a virtual environment from a lock file: `uv sync`
+9. Update module: `uv lock --upgrade-package libname`
+10. Create pyproject.toml only, inside an existing directory: `uv init --bare`
+11. Create requirements.txt: `uv pip freeze > requirements.txt`
+12. Load dependencies from requirements.txt: `uv add -r requirements.txt`
+13. Initialise project with a requirements from another project:
+
+```bash
+uv init
+uv add -r requirements.txt
+uv sync
+```
+
+Docs: `https://docs.astral.sh/uv/getting-started/features/`
+

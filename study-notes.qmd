@@ -9,16 +9,9 @@ listing:
   filter-ui: false
 page-layout: full
 title-block-banner: false
----
 
-# Study Notes
+---
 
 Welcome to my study notes section! Here you'll find comprehensive notes on various topics I'm learning and exploring.
 
-## Latest Notes
-
-This section automatically displays my latest study notes. Each note covers important concepts, examples, and practical applications.
-
 ---
-
-*Notes are continuously updated as I learn new concepts and techniques. Check back regularly for fresh content!*
