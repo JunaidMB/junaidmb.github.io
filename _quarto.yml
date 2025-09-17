@@ -4,7 +4,7 @@ project:
 website:
   title: "Junaid's Blog"
   description: "A personal blog built with Quarto"
-  site-url: "https://junaidmb.github.io"
+  site-url: "https://JunaidMB.github.io"
   navbar:
     left:
       - href: index.qmd
