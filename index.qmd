@@ -9,15 +9,14 @@ toc: true
 
 <div class="about-container">
 
-<div class="profile-section">
+<!-- <div class="profile-section">
 <img src="https://via.placeholder.com/300x300/5A4A62/ffffff?text=Your+Photo" alt="Profile Photo" class="profile-image">
-</div>
+</div> -->
 
 <div class="about-content">
 
-Hi! My name is Junaid, and I'm a **Machine Learning Software Engineer** 🤖. I majored in **Software Design and Development** and I have minors in both **Computer Science** and **Environmental Science**.
-
-I have a heavy passion for **Deep Learning** and **Open Source** libraries. As a result, below you will find some notable articles I've written, a few courses I've made, some of software libraries I've written, interesting projects, and the open source libraries I have tried to contribute the most to.
+Hello there! My name is Junaid and I've worn many hats, most notably **Research Engineer**, **Data Scientist** and **Machine Learning Engineer**. I'm interested in Machine Learning, Statistics and Computer Science. 
+My academic background is in Computational Statistics and Data Science. I've created this blog to catalogue the things I'm learning as I build cool things.
 
 </div>
 

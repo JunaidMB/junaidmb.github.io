@@ -3,6 +3,7 @@ project:
   render:
     - "*.qmd"
     - "!WRITER_GUIDE.md"
+    - "!Junaid_Butt_Resume.pdf"
 
 website:
   title: "Junaid Butt"

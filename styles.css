@@ -1,13 +1,13 @@
 /* Custom Purple Theme for Quarto Blog */
 
 :root {
-  --purple-primary: #5A4A62;
-  --purple-light: #6B5B73;
+  --purple-primary: #5f1f7f;
+  --purple-light: #905ea9;
   --purple-lighter: #8A7A92;
   --purple-dark: #443540;
   --purple-darker: #2F252E;
   --text-dark: #2d3748;
-  --text-light: #4a5568;
+  --text-light: #49628f;
   --background-light: #fafafa;
 }
 

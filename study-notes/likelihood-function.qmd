@@ -1,5 +1,5 @@
 ---
-title: "Statistical Inference - The Likelihood Function"
+title: "The Likelihood Function"
 author: "Junaid Butt"
 date: today
 categories: [statistical inference, fundamentals]

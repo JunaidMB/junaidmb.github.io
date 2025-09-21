@@ -1,0 +1,508 @@
+---
+title: "LLM API Quickstart"
+author: "Junaid Butt"
+date: today
+categories: [LLM, Gemini, GPT]
+description: "Code snippets most often used when working with LLM APIs (GPT, Gemini, Openrouter)."
+---
+
+# JSON
+
+```python
+import json
+
+# Reading JSON
+with open('sample.json', 'r') as openfile:
+
+  json_object = json.load(openfile)
+
+# Writing JSON
+
+with open("sample.json", "w") as outfile:
+    
+    json.dump(dictionary, outfile)
+```
+
+# OpenAI API
+
+## Text Generation
+```python
+# Unstructured Output
+from openai import OpenAI
+from pydantic import BaseModel, Field
+
+client = OpenAI()
+
+prompt = """
+Please look at {var1} and {var2} and tell me if they're related.
+""".strip()
+input_args = {"var1": "foo", "var2": "bar"}
+
+client.chat.completions.create(
+        model="gpt-4o",
+        messages=[
+            {
+            "role": "user",
+            "content": [
+                {
+                "type": "text",
+                "text": prompt.format_map(
+                    input_args
+                ),
+                },
+            ],
+            }
+        ],
+        temperature = 0.0,
+        max_tokens = 1500,
+    )   
+
+# Structured Output
+class CalendarEvent(BaseModel):
+    name: str = Field(description= "This is the name")
+    date: str
+    participants: list[str]
+
+completion = client.beta.chat.completions.parse(
+    model="gpt-4o-2024-08-06",
+    messages=[
+        {"role": "system", "content": "Extract the event information."},
+        {"role": "user", "content": "Alice and Bob are going to a science fair on Friday."},
+    ],
+    response_format=CalendarEvent,
+)
+
+event = completion.choices[0].message.parsed
+```
+
+## Image Input
+```python
+import base64
+from openai import OpenAI
+from pydantic import BaseModel, Field
+
+client = OpenAI()
+
+def encode_image(image_path):
+  with open(image_path, "rb") as image_file:
+    return base64.b64encode(image_file.read()).decode("utf-8")
+
+img_path = Path("path to image file")
+
+with open(prompt_dir / "prompt.md") as f:
+    prompt = f.read().strip()
+
+gpt_response = openai_client.chat.completions.create(
+    model="gpt-4.1-2025-04-14",
+    messages=[
+        {
+            "role": "user",
+            "content": [
+                { "type": "text", "text": prompt },
+                {
+                    "type": "image_url",
+                    "image_url": {
+                        "url": f"data:image/png;base64,{encode_image(img_path)}",
+                    },
+                },
+            ],
+        }
+    ],
+    temperature=0.0,
+    max_completion_tokens=3000,
+)
+
+gpt_response.choices[0].message.content
+```
+
+# Gemini API
+
+## Text Generation
+
+```python
+import os
+from dotenv import load_dotenv
+from google import genai
+from google.genai import types
+from pydantic import BaseModel, Field
+from typing import Dict, List
+
+gemini_client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+
+def parse_json(json_output: List[str]) -> List[Dict]:
+  """
+  Parse JSON output from text that may contain markdown fencing.
+
+  Args:
+    json_output (str): String containing JSON with potential markdown fencing.
+
+  Returns:
+    str: Clean JSON string with markdown fencing removed.
+  """
+  # Parsing out the markdown fencing
+  lines = json_output.splitlines()
+  for i, line in enumerate(lines):
+    if line == "```json":
+      json_output = "\n".join(lines[i+1:])  # Remove everything before "```json"
+      json_output = json_output.split("```")[0]  # Remove everything after the closing "```"
+      break  # Exit the loop once "```json" is found    
+  return json_output
+
+prompt = """
+Explain how AI works
+""".strip()
+
+# Unstructured Output
+response = gemini_client.models.generate_content(
+    model="gemini-2.5-flash",
+    contents=[prompt],
+    config=types.GenerateContentConfig(
+        temperature=0.1,
+        max_output_tokens=3000,
+    )
+)
+
+response.text
+
+# Structured Output
+class Recipe(BaseModel):
+    recipe_name: str = Field(description="Name of recipe")
+    ingredients: list[str]
+
+response = gemini_client.models.generate_content(
+    model="gemini-2.5-flash",
+    contents="List a few popular cookie recipes, and include the amounts of ingredients",
+    config={
+        "response_mime_type": "application/json",
+        "response_schema": list[Recipe],
+    },
+)
+
+# Use the response as a JSON string.
+response.text
+```
+
+## Image Input
+```python
+from google.genai import types
+
+with open('path/to/small-sample.jpg', 'rb') as f:
+    image_bytes = f.read()
+
+encoded_img = types.Part.from_bytes(
+      data=image_bytes,
+      mime_type='image/jpeg',
+    )
+
+response = client.models.generate_content(
+  model='gemini-2.5-flash',
+  contents=[
+    encoded_img,
+    'Caption this image.'
+  ]
+)
+
+print(response.text)
+```
+
+## Openrouter API
+
+### Text Generation
+```python
+from openai import OpenAI
+
+client = OpenAI(
+  base_url="https://openrouter.ai/api/v1",
+  api_key="<OPENROUTER_API_KEY>",
+)
+
+completion = client.chat.completions.create(
+  extra_body={},
+  model="google/gemma-3-27b-it:free",
+  messages=[
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "What is backpropagation>"
+        },
+      ]
+    }
+  ]
+)
+
+print(completion.choices[0].message.content)
+```
+
+## Gemini API Image Generation
+
+```python
+from google import genai
+from google.genai import types
+from PIL import Image
+from io import BytesIO
+
+client = genai.Client()
+
+# Generate an image from a text prompt
+response = client.models.generate_content(
+    model="gemini-2.5-flash-image-preview", # Model must be this
+    contents="Create a modern, minimalist logo for a coffee shop called 'The Daily Grind'. The text should be in a clean, bold, sans-serif font. The design should feature a simple, stylized icon of a a coffee bean seamlessly integrated with the text. The color scheme is black and white.",
+)
+
+image_parts = [
+    part.inline_data.data
+    for part in response.candidates[0].content.parts
+    if part.inline_data
+]
+
+if image_parts:
+    image = Image.open(BytesIO(image_parts[0]))
+    image.save('logo_example.png')
+    image.show()
+```
+
+
+## Gemini API Spatial Reasoning: Draw Bounding boxes in images
+```python
+from PIL import Image
+import io
+import os
+import requests
+from io import BytesIO
+from google import genai
+from google.genai import types
+
+client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+
+def parse_json(json_output: str) -> str:
+    """
+    Parse JSON output from text that may contain markdown fencing.
+    
+    Args:
+        json_output (str): String containing JSON with potential markdown fencing
+    
+    Returns:
+        str: Clean JSON string with markdown fencing removed
+    """
+    lines = json_output.splitlines()
+    for i, line in enumerate(lines):
+        if line == "```json":
+            json_output = "\n".join(lines[i+1:])
+            json_output = json_output.split("```")[0]
+            break
+    return json_output
+
+
+def relative_to_absolute_bbox(relative_bbox: List[int], original_image_dims: tuple) -> List[int]:
+    """
+    Convert relative bounding box coordinates to absolute coordinates.
+    
+    Args:
+        relative_bbox (List[int]): List of 4 integers representing normalized bbox coordinates [y1,x1,y2,x2]
+        original_image_dims (tuple): Tuple of (width, height) of original image
+    
+    Returns:
+        List[int]: List of 4 integers representing absolute bbox coordinates [y1,x1,y2,x2]
+    """
+    width, height = original_image_dims
+
+    # Convert normalized coordinates to absolute coordinates
+    abs_y1 = int(relative_bbox[0]/1000 * height)
+    abs_x1 = int(relative_bbox[1]/1000 * width)
+    abs_y2 = int(relative_bbox[2]/1000 * height)
+    abs_x2 = int(relative_bbox[3]/1000 * width)
+
+    # Ensure coordinates are in correct order
+    if abs_x1 > abs_x2:
+        abs_x1, abs_x2 = abs_x2, abs_x1
+    if abs_y1 > abs_y2:
+        abs_y1, abs_y2 = abs_y2, abs_y1
+
+    return [abs_y1, abs_x1, abs_y2, abs_x2]
+
+
+def image_to_bytes(input_image: Image.Image) -> bytes:
+    """
+    Convert a PIL Image to bytes.
+    
+    Args:
+        input_image (Image): PIL Image object to convert to bytes
+    
+    Returns:
+        bytes: Image converted to bytes in PNG format
+    """
+    img_byte_arr = BytesIO()
+    input_image.save(img_byte_arr, format='PNG')
+    return img_byte_arr.getvalue()
+
+
+def draw_bbox_on_image(
+    input_image: Image.Image,
+    bbox_with_labels: List[Dict[str, Union[List, str]]],
+    display_output_image: bool = True
+) -> Image.Image:
+    """
+    Draw bounding boxes and their labels on an input image.
+    
+    Args:
+        input_image (Image): PIL Image object to draw bounding boxes on
+        bbox_with_labels (List[Dict]): List of dictionaries containing bounding boxes and labels
+                                      Format: [{'relative_bbox': List[int], 'abs_bbox': List[int], 'label': str}]
+        display_output_image (bool): Whether to display the output image
+    
+    Returns:
+        Image: Copy of input image with bounding boxes and labels drawn
+    """
+    # Define colors for bounding boxes
+    colors = [
+        'red', 'green', 'blue', 'yellow', 'orange', 'pink', 'purple', 'brown',
+        'gray', 'cyan', 'magenta', 'lime', 'navy', 'maroon', 'teal', 'olive'
+    ]
+
+    # Create a copy of the input image for drawing
+    output_image = input_image.copy()
+    draw = ImageDraw.Draw(output_image)
+
+    # Draw each bounding box
+    for i, bounding_box in enumerate(bbox_with_labels):
+        # Select color (cycle through available colors)
+        color = colors[i % len(colors)]
+
+        # Extract absolute coordinates [y1, x1, y2, x2]
+        abs_y1, abs_x1, abs_y2, abs_x2 = bounding_box["abs_bbox"]
+
+        # Draw the bounding box rectangle
+        draw.rectangle(((abs_x1, abs_y1), (abs_x2, abs_y2)), outline=color, width=4)
+
+        # Draw the label text
+        if "label" in bounding_box:
+            label_text = f"{i+1}. {bounding_box['label']}"
+            draw.text((abs_x1 + 8, abs_y1 + 6), label_text, fill=color)
+
+    # Display the image if requested
+    if display_output_image:
+        display(output_image)
+
+    return output_image
+
+
+def crop_image_by_abs_bbox(
+    bboxes: Union[Dict, List[List[int]]],
+    input_image: Image.Image,
+    buffer: Dict[str, int] = None,
+) -> List[Image.Image]:
+    """
+    Crop an image using absolute bbox coordinates with optional directional buffer.
+    
+    Args:
+        bboxes: Dict containing 'abs_bbox' or list of bboxes as [y1, x1, y2, x2]
+        input_image: PIL Image object to crop
+        buffer: Optional buffer values for each direction (above, below, left, right)
+    
+    Returns:
+        List[Image.Image]: List of cropped images
+    """
+    if buffer is None:
+        buffer = {}
+    
+    buf_above = buffer.get("above", 0)
+    buf_below = buffer.get("below", 0)
+    buf_left = buffer.get("left", 0)
+    buf_right = buffer.get("right", 0)
+
+    img_width, img_height = input_image.size
+
+    # Normalize input: extract bbox list
+    if isinstance(bboxes, dict):
+        if "abs_bbox" not in bboxes:
+            raise ValueError("Dict input must contain 'abs_bbox' key.")
+        bbox_list = [bboxes["abs_bbox"]]
+    elif isinstance(bboxes, list) and all(isinstance(b, list) for b in bboxes):
+        bbox_list = bboxes
+    else:
+        raise ValueError("Input must be a dict with 'abs_bbox' or a list of bboxes.")
+
+    cropped_images = []
+
+    for y1, x1, y2, x2 in bbox_list:
+        # Apply directional buffers and clamp to image boundaries
+        crop_left = max(0, x1 - buf_left)
+        crop_top = max(0, y1 - buf_above)
+        crop_right = min(img_width, x2 + buf_right)
+        crop_bottom = min(img_height, y2 + buf_below)
+
+        # Crop region
+        cropped_img = input_image.crop((crop_left, crop_top, crop_right, crop_bottom))
+        cropped_images.append(cropped_img)
+
+    return cropped_images
+
+system_instructions = """
+  Return bounding boxes as a JSON array with labels. Never return masks or code fencing. Limit to 25 objects.
+  If an object is present multiple times, name them according to their unique characteristic (colors, size, position, unique characteristics, etc..).
+  """.strip()
+
+prompt = "Detect the 2d bounding boxes of the cupcakes (with “label” as topping description”)" 
+
+# Load and resize image
+with open(img_path, "rb") as f:
+    page_img = Image.open(BytesIO(f.read()))
+
+page_img.thumbnail((2048, 2048), Image.Resampling.LANCZOS)
+
+encoded_page_image = types.Part.from_bytes(
+    data=image_to_bytes(page_img), 
+    mime_type=f"image/jpeg"
+)
+
+# Run model to find bounding boxes
+response = client.models.generate_content(
+    model="gemini-2.5-flash-preview-05-20",
+    contents=[prompt, encoded_page_image],
+    config = types.GenerateContentConfig(
+        system_instruction=system_instructions,
+        temperature=0.0,
+        safety_settings=safety_settings,
+        thinking_config=types.ThinkingConfig(
+          thinking_budget=0
+        )
+    )
+)
+
+# Parse the JSON response
+extracted_bboxes = json.loads(parse_json(response.text))
+
+response_with_bbox = [
+{
+    "relative_bbox": box["box_2d"],
+    "abs_bbox": relative_to_absolute_bbox(box["box_2d"], page_img.size),
+    "label": box["label"]
+}
+for box in extracted_bboxes
+]
+
+# Visualise
+annotated_image = draw_bbox_on_image(
+input_image=page_img,
+bbox_with_labels=response_with_bbox,
+display_output_image=True
+)
+
+# Crop Images by detected objects
+# Extract absolute bounding boxes
+absolute_bboxes = [item['abs_bbox'] for item in response_with_bbox]
+
+cropped_images = crop_image_by_abs_bbox(
+    absolute_bboxes, 
+    page_img, 
+    buffer={"below": 25}
+)
+
+# Display cropped results
+for i, cropped_image in enumerate(cropped_images):
+    print(f"Cropped section {i+1}:")
+    display(cropped_image)
+
+```
