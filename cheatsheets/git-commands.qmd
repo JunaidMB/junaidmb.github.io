@@ -1,0 +1,121 @@
+---
+title: "Git Commands Cheatsheet"
+author: "Junaid Butt"
+date: 2025-09-25
+categories: [git, github, version control, terminal]
+description: "Basic Git survival guide."
+---
+
+1. Initialise a directory as a repository which can track changes to files and subdirectories
+    `git init` 
+2. Check status in a directory 
+    `git status`
+3. Add a file to branch
+    1. Single file
+        `git add [filepath]`
+    2. All files
+         `git add .`
+
+
+![images/figures/git_status_sequence](https://softcover.s3.amazonaws.com/636/learn_enough_git/images/figures/git_status_sequence.png)
+
+
+Figure 4: *The main Git status sequence for a changing file.*
+
+4. Commit changes with a short message of changes
+   `git commit -m ['insert message']`
+5. Show a log of commits
+    a. `git log`
+6. Check the differences between the master branch and the current branch
+   `git diff`
+7. Push a file on the local repository to the remote repository
+   `git push origin [branch name]`
+8. Create a configuration file called .gitignore as a text file which contains name of files and directories that will not be pushed to git
+    1. `.gitignore`
+    2. create file `touch .gitignore`
+9.  View current branches from master
+    `git branch`
+10. Change from master branch: never work in the Master branch so create a separate branch:
+    1. `git checkout -b ['name of new branch']`
+    2. `git checkout [``'``name of branch``'``]` - moves to named branch
+11. Merge changes from a branch to a master branch
+    `git merge [``'``name of branch to merge to current branch``'``]`
+12. Clone repository to current directory
+    `git clone [``'``github url from where to clone``'``]`
+13. Ensure master branch is up to date
+    `git pull origin master`
+14. To copy a file from computer to a branch:
+    1. Single file
+        1. `cp ../foldername[i]/filename ./foldername[i]/filename`
+    2. Multiple files
+        1. `cp ../foldername[i]/* ./foldername[j]/filename` 
+             *copies everything from foldername[i] to foldername[j]* 
+15. Remove a file from the index
+    git rm --cached <filename>
+16. Remove a directory from index
+    git rm -r --cached <foldername>
+
+## Putting existing work on GitHub
+
+1. Create a new repository on GitHub
+2. In the terminal, go to the directory that we want to push to Github - this is called the local directory
+3. Initialise the local directory as Git local repository 
+    `git init` 
+4. Add the files in the Git local repository to a staging environment
+    `git add .` 
+5. Commit the files in the local repository
+    `git commit -m` `"``First commit``"`
+6. Back in the Github Quick Setup page, copy the remote repository URL - this is where the files in the local repository will be pushed to. 
+7. Back in the terminal, add the URL for the remote repository where the local repository will be pushed
+    `git remote add origin {remote repository URL}`
+    `git remote -v #Verifies the new remote URL` 
+8. Push changes in the local repository to GitHub
+    `git push -u origin master` 
+
+Notes:
+
+1. If we wish to retrieve files from github
+    `git pull origin [branchname]` 
+2. To check where git is pulling and pushing files from and to
+    `git remote`
+
+
+
+## Setting up a gitignore file
+- A .gitignore file specifies the files that you want github to ignore and not show in the repository on the website. We can choose to hide the .gitignore file itself by self reference in the .gitignore.
+- To create a .gitignore file, go to the directory that you intend to push to github and create a text file labelled ‘.gitignore’. In this file, list all the files and directories you don’t want to push to github - let a new file/ directory be placed on a new line.
+- An example of a .gitignore file is 
+
+
+![](https://paper-attachments.dropbox.com/s_8C722D3AA9F02C6DDE84CC7E149F0C51663BDDA23D18F23CB693CF982C3EA0E3_1590354065361_Screenshot+2020-05-24+at+22.01.00.png)
+
+
+All the files in this text file will not be pushed to github but still appear in your directory locally.
+- If we have files already in github that we would later like to untrack, we will have to include them into the .gitignore, remove them from the git index and recommit. To do this
+    git rm --cached {filename}
+
+
+## Using Git Stash
+
+- Usually when a repository is updated at its origin and we have local changes on the same branch, we will first push our new changes and make a Pull Request. Then the owner of the repo will merge the Pull Request. Once this is done, we will pull the updated repository.
+- At other times, we want to pull the updated repository without submitting our local changes. In cases like this we can stash the changes and pull the repository from origin. 
+1. Create a stash
+    `git stash`
+    `git stash -a` (include untracked and ignored files)
+2. List stashes 
+    `git stash list`
+3. Save stash and add name to stash
+    `git stash save {name of stash}`
+4. Retrieve stashed changes
+    `git stash pop stash@{1}`
+5. Clean up the stash
+    `git stash clear` (removes all stashes)
+    `git stash drop {stash_id}`
+6. Check Stash diff
+    `git stash show {stash_id}`
+
+
+## References
+
+1. https://opensource.com/article/21/4/git-stash
+
