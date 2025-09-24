@@ -79,8 +79,6 @@ Notes:
 2. To check where git is pulling and pushing files from and to
     `git remote`
 
-
-
 ## Setting up a gitignore file
 - A .gitignore file specifies the files that you want github to ignore and not show in the repository on the website. We can choose to hide the .gitignore file itself by self reference in the .gitignore.
 - To create a .gitignore file, go to the directory that you intend to push to github and create a text file labelled ‘.gitignore’. In this file, list all the files and directories you don’t want to push to github - let a new file/ directory be placed on a new line.
