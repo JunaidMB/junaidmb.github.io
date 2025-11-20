@@ -2,7 +2,7 @@
 title: "Introduction to Key-Value Cache"
 author: "Junaid Butt"
 date: "2025-11-20"
-image: "!./images/decoder_only.png"
+image: "./images/decoder_only.png"
 ---
 
 This post presumes familiarity with the transformer architecture and how tokens are computed and selected. During inference, we autoregressively generate new tokens given all the previous tokens generated. 
