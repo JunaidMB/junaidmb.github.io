@@ -1,7 +1,7 @@
 ---
 title: "Introduction to Key-Value Cache"
 author: "Junaid Butt"
-date: "2025-11-20"
+date: "2025-11-23"
 image: "./images/decoder_only.png"
 ---
 
@@ -124,5 +124,44 @@ At each step, instead of recomputing the entire history, the Key and Value matri
 8. Update Cache: Save the updated Key and Value matrices back to the KV cache for the next iteration
 
 Caching happens independently at each level of the model architecture. The KV cache is maintained on a per layer and per attention head basis.
+
+The KV cache increases memory cost. The inference process becomes memory bandwidth bound because at every generation step, the Key and Value matrices for all previous tokens must be read from the GPU's main memory to compute cores. This data movement becomes a performance bottleneck.
+
+The memory required for a KV cache with Multi-Head Attention (MHA) is computed as 
+
+$$ \mathbf{mha\ size} = l \times b \times n \times h \times s \times 2 \times 2 $$
+
+where
+
+l (layers): The total number of Transformer blocks in the model. We need a separate cache for each layer.
+
+b (batch size): The number of sequences we process in parallel.
+
+n (heads): The number of attention heads per layer.
+
+h (head size): The dimension of each attention head's Key and Value vectors.
+
+s (sequence length): The number of tokens in the context. This is a critical factor.
+
+First number 2 We need to cache two matrices: one for Keys and one for Values. 
+
+Second number 2 This represents the number of bytes per parameter. A standard 16-bit floating-point number (like float16 or bfloat16) takes up 2 bytes of memory.
+
+For a large 30 billion parameter model with 48 layers, there are 7168 total head dimensions (n x h) and a context length of 1024 - the KV cache for a batch size of 128 would be 180 GB.
+
+## Addressing the KV cache Memory issue with Multi-Query Attention (MQA)
+
+MQA proposes that each attention head gets its own Query projection matrix but that all heads share **one** common set of Key and Value matrices.
+
+The effect of MQA on the KV cache size is:
+
+$$ \mathbf{mqa\ size} = l \times b \times 1 \times h \times s \times 2 \times 2 $$
+
+Since all attention heads share the same K and V matrices, the number of attention heads becomes a constant of 1.
+
+MQA comes with a tradeoff, by forcing all heads to share the same Key and Value matrices, the ability to specialise is restricted. As a consequence of fewer parameters, the transformer loses capacity to capture diverse and subtle relationships within the text. 
+
+One attempt to find a middle ground is to use grouped query attention (GQA). GQA shares K and V matrices across groups of attention heads as opposed to keeping the same across all attention heads. For example, if we allow K and V matrices to be used across groups of $k=2$ heads, then we have $\frac{H}{k=2}$ K, V matrices with $H \times Q$ query projection matrices, with $H$ being the total number of attention heads.
+
 
 
