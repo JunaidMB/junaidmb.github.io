@@ -1,0 +1,56 @@
+---
+title: "Research-Plan-Implement: Using Coding Agents"
+author: "Junaid Butt"
+date: 2025-11-26
+categories: [agents, claude]
+description: "Spec driven usage of coding agents."
+---
+
+# Research Phase
+
+The goal of this phase is to understand the codebase with respect to some user requirements. The output of this phase is a detailed map of the codebase, written
+in a document called `research.md` that shows all relevant code which the agent will require to satisfy a user query.
+
+Code example (via a custom slash command)
+```
+/research_codebase read @user_requirements.md and all parts of the code base that are relevant to implementing the features therein. Explain it all for me 
+in a way that the next agent can pick it up and get to work.
+```
+
+The output file `research.md` must be human reviewed.
+
+# Plan Phase
+
+The goal of this phase is to use the `research.md` document to create a detailed implementation plan to build the desired features. 
+
+Code example (via a custom slash command)
+```
+/create_plan read @user_requirements.md and the research in @research.md and then lets work back and forth to outline the phases, start with your open questions
+for me and then give me a phase outline before writing the plan.
+```
+
+This process is iterative with the user to refine planning phases. Ask the agent to defer to the user and go back and forth since it has a habit of taking on long tasks indepedently.
+The implementation plan should be output in a document named `plan.md`. When this is complete, the user should read it and iterate with the agent to refine the `plan.md` document.
+
+Code example to update a plan (via a custom slash command)
+```
+/create_plan I'm not creating a new plan but updating the existing plan @plan.md. Don't perform any new research, use the guidelines to update the plan. Standby for my feedback.
+```
+
+# Implement Phase
+
+The goal of this phase is to implement `plan.md` via the coding agent - ideally incrementally and actually make code changes.
+
+Code example (via a custom slash command)
+```
+/implement_plan we're working on @plan.md, work on implementing phase 1 and show me the results. Ask me to manually review after every change major change made.
+```
+
+Generally speaking, you want the coding agent to generate good, human understandable tests. Then, spend time checking those tests.
+
+
+# References
+
+1. Human Layer's [.claude](https://github.com/humanlayer/humanlayer/tree/main/.claude) directory. Add the relevant command `md` files from the commands directory.
+2. Spec-based coding agents [walkthrough](https://www.youtube.com/watch?v=42AzKZRNhsk&t=1815s)
+3. Reseach-Plan-Implement interview with [Dexter Horthy](https://www.youtube.com/watch?v=Yjl5d0rqak4)
