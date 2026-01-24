@@ -70,7 +70,7 @@ $$L_{is} = \frac{1}{l} \sum_{k \in H} \sum_{i=1}^{l} loss(h_{t, i}^{(k)}, h_{s, 
 
 where
 
-* $(h_{t}^{k_{i}}, h_{s}^{k_{i}})$ represents the kth hidden state for the i-th token. 
+* $(h_{t, i}^{(k)}, h_{s, i}^{(k)})$ represents the kth hidden state for the i-th token. 
 
 * $l$ is the sequence length.
 
