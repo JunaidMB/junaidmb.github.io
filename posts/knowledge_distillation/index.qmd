@@ -13,7 +13,7 @@ The most fundamental form of distillation involves matching the output probabili
 ## Softmax Temperature
 
 Standard models output a probability distribution over the vocabulary. In KD, we introduce a Temperature ($\tau$) parameter to "soften" this distribution, revealing hidden relationships between classes.
-The probability of an input token $x_i$ is given by:
+The probability of the i-th token logit $x_i$ is given by:
 
 $$Pr(x_{i},\tau)=\frac{exp[x_{i}/\tau]}{\sum_{j=1}^{|V|}exp[x_{j}/\tau]}$$
 
@@ -38,11 +38,11 @@ where
 
 The loss function aims to minimise divergence between teacher and student probability distributions. The most popular kinds of divergence tend to be:
 
-1. Forward KL divergence: $$\sum p(t) log[\frac{p(t)}{q(t)}]$$
+1. Forward KL divergence: $$\sum p(x) log[\frac{p(x)}{q(x)}]$$
 
-2. Reverse KL divergence: $$\sum q(t) log[\frac{q(t)}{p(t)}]$$
+2. Reverse KL divergence: $$\sum q(x) log[\frac{q(x)}{p(x)}]$$
 
-3. JS divergence: $$\frac{1}{2}[\sum p(t) log[\frac{2p(t)}{p(t)+q(t)}] + \sum q(t) log[\frac{2q(t)}{p(t)+q(t)}]]$$
+3. JS divergence: $$\frac{1}{2}[\sum p(x) log[\frac{2p(x)}{p(x)+q(x)}] + \sum q(x) log[\frac{2q(x)}{p(x)+q(x)}]]$$
 
 Empirically, reverse KL divergence is preferable for tasks like dialogue generation and instruction tuning. Note, in the identities above one distribution will be the teacher model's distribution and the other will be the student model.
 
@@ -78,7 +78,7 @@ where
 
 A common challenge is that the student model and teacher models will have mismatched hidden states - the matrix/ vector dimensions may be incompatible. 
 To address this, a shared linear transformation is learned during distillation which upscales and maps the student hidden state to the same dimensional space as the teacher hidden state. 
-The hidden states used are always after the LayerNorm operation.
+The hidden states used are often after the LayerNorm operation.
 
 The total loss is computed as:
 $$\mathcal{L} = L_{CLM} + L_{logits} + \alpha L_{is}$$
@@ -191,10 +191,10 @@ $$h_{i} = Attn(XW^{Q, i}, XW^{K, i}, XW^{V, i})$$
 
 where
 
-* $XW^{Q, i}, XW^{K, i}, XW^{V, i} \in \mathbb{R}^{d_{head} \times d_{model}}$
+* $XW^{Q, i}, XW^{K, i}, XW^{V, i} \in \mathbb{R}^{d_{model} \times d_{head}}$
 
 * $W^{0} \in \mathbb{R}^{(L \times d_{head}) \times d_{model}}$ → $L$ are the total number of attention heads and $d_{head}$ is the size of a single attention head.
 
 Layer Normalisation is defined as:
 
-$$LN(X) = (\frac{X - \mu}{\sqrt{\sigma^{2} + \epsilon}} \odot \alpha) + \beta$$
+$$LN(X) = (\frac{X - \mu}{\sqrt{\sigma^{2} + \epsilon}} \odot \gamma) + \beta$$
