@@ -7,14 +7,16 @@ image: "./images/racecar.png"
 
 # GPU memory system
 
-The memory hierarchy from slowest to fastest are;
+The memory hierarchy from slowest to fastest are:
+
 1) **Host machine memory**: This is CPU & DRAM memory; Not on GPU, it is large but slow to retrieve from
 2) **VRAM & HBM**: Lives on the GPU, it is smaller than host memory but much faster
 3) **SRAM**: Lives on GPU, it is physically closest to tensor cores. The tensor cores need their data from SRAM, they perform mathematical operations & write the results back to SRAM. It is the fastest but smallest size
 
 Model weights are loaded once at start-up from the Host machine memory to GPU memory. The KV cache also lives on VRAM and grows as each request processes more tokens. During every forward pass, small chunks of model weights & KV cache are pulled into SRAM so tensor cores can perform computations. This happens for every layer & every token.
 
-2 things govern how fast inference can occur
+2 things govern how fast inference can occur:
+
 1) How fast can data move from HBM to SRAM
 2) How fast can tensor cores perform computations
 
@@ -29,12 +31,14 @@ During inference, as the context length increases, the KV cache also expands.
 $$2 \times \text{num\_layers} \times \text{num\_KV\_per\_layer} \times \text{head\_dim} \times \text{dtype\_bytes}$$
 
 **For a model like Llama 3 70B we have:**
+
 - **Num layers:** 80
 - **Num KV per layer:** 8 parallel sets of Key, Value matrices per layer - these are KV heads
 - **head dim:** The dimensions of the vectors in KV cache is 128
 - **dtype bytes:** Each number is stored in BF16 precision which takes up 2 bytes each
 
 Hence, by transformer we require 320 kB per token. Scaling this up to a 128k token context is 40 GB. Taken together we have:
+
 1) Model parameters holding 140 GB
 2) KV cache holds 40 GB for a single request
 
@@ -43,6 +47,7 @@ If we serve 10 concurrent, long context uses we require 400+ GB. The KV cache li
 # vLLM Inference Concepts
 
 vLLM implements inference optimisation techniques that make serving models less memory and compute intensive. All these techniques are used in tandem. But for pedagogical purposes, they will be presented in isolation.
+
 ## Continuous batching
 
 **Continuous batching** is a strategy that arranges for batches of prompts to be given to the GPU in an efficient way by fully composing the data instances of the batch. The vLLM scheduler shuffles requests in and out of the batch slots between every single token generated.
@@ -73,6 +78,7 @@ We continue in this way until all requests have been completed.
 The biggest bottleneck in LLM serving is the **KV cache growth**. Instead of storing the KV cache of a single request in a continuous chunk of VRAM, PagedAttention breaks the KV cache into fixed sized blocks. 
 
 A table is created to represent each sequence and is broken into the following parts with the mapping:
+
 1. **Physical Blocks**: A contiguous block of VRAM that holds KV vectors for a fixed number of tokens
 2. **Logical Blocks**: A sequence is cached across multiple logical blocks which are not physically contiguous
 3. **Block Table**: A mapping between a logical block & physical blocks
@@ -86,16 +92,14 @@ Let a block size contain 4 tokens and a prompt = "The cat sat on". We will gener
 | :------------ | :------------- | :----------- |
 | Block 0       | Block 7        | 4/4          |
 
-2. **Decode**: The model processes the prompt and generates the next token -  "the". To generate this, the model performs an attention calculation. Paged Attention looks at block 7, fetches the KV cache & computes attention score.
-
-To store the KV vectors for token "the", we enter into a new row in the lookup table. Let this be logical block 1 and physical block 12. The vectors are saved here
+2. **Decode**: The model processes the prompt and generates the next token -  "the". To generate this, the model performs an attention calculation. Paged Attention looks at block 7, fetches the KV cache & computes attention score. To store the KV vectors for token "the", we enter into a new row in the lookup table. Let this be logical block 1 and physical block 12. The vectors are saved here
 
 | Logical Block | Physical Block | Slots filled |
 |:--------------|:---------------|:-------------|
 | Block 0       | Block 7        | 4/4          |
 | Block 1       | Block 12       | 1/4          |
 
-3) To predict the next token - "mat", the PagedAttention fetches KV cached vectors from (Physical) Block 7 and Block 12 to compute attention. This vector is saved to Physical block 12 because it has space.
+3. To predict the next token - "mat", the PagedAttention fetches KV cached vectors from (Physical) Block 7 and Block 12 to compute attention. This vector is saved to Physical block 12 because it has space.
 
 | Logical Block | Physical Block | Slots filled |
 |:--------------|:---------------|:-------------|
@@ -104,14 +108,16 @@ To store the KV vectors for token "the", we enter into a new row in the lookup t
 We continue in the same way until the entire request has been generated. After the response has been completed, this memory is freed and the blocks return to a global memory.
 
 Paged Attention enables memory sharing. If an LLM is asked to generate multiple responses from the same prompt. The prompt block (logical Block 0) can be shared across multiple requests. vLLM points to the Block Tables of all identical requests to Physical block 7/logical block 0. Only when individual generations begin to deviate do they allocate their own independent physical blocks.
+
 ### Example 2: Multiple Different Requests
 
 Let each block hold 4 token KV cache vectors. Let the physical block IDs be $[3, 7, 9, 12, 15, 21]$.
 We receive 2 distinct requests:
+
 - **Request A:** 'The cat sat'
 - **Request B:** 'Artificial Intelligence is'
 
-1) Prefill Phase: Both requests are sent to model to process initial prompt tokens.
+1. Prefill Phase: Both requests are sent to model to process initial prompt tokens.
 - **Req A** has 3 tokens, it is allocated to physical block 3.
 - **Req B** has 3 tokens, it is allocated to physical block 7.
 
@@ -148,6 +154,7 @@ As we continue, each request maintains its own block table. All pulling from a g
 This process involves breaking a large prefix prompt into smaller, fixed size chunks and co-batching them with active decode requests in the some scheduling iteration. The scheduler prioritises existing decode requests. It can best be illustrated via an example.
 
 **Example 1:** Let the number of tokens generated at each time step be $40$. Suppose there are $3$ active request, $2$ are in decode mode and the third is in prefix phase and has a length of $50$ tokens.
+
 ### Iteration 1: $T=1$
 
 Requests A & B are in decode phase, so require a single token at this step. This leaves us with the ability to process $38$ tokens.
