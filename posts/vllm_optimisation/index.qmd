@@ -1,0 +1,169 @@
+---
+title: "Making LLMs go fast with vLLM"
+author: "Junaid Butt"
+date: "2026-06-30"
+image: "./images/racecar.png"
+---
+
+# GPU memory system
+
+The memory hierarchy from slowest to fastest are;
+1) **Host machine memory**: This is CPU & DRAM memory; Not on GPU, it is large but slow to retrieve from
+2) **VRAM & HBM**: Lives on the GPU, it is smaller than host memory but much faster
+3) **SRAM**: Lives on GPU, it is physically closest to tensor cores. The tensor cores need their data from SRAM, they perform mathematical operations & write the results back to SRAM. It is the fastest but smallest size
+
+Model weights are loaded once at start-up from the Host machine memory to GPU memory. The KV cache also lives on VRAM and grows as each request processes more tokens. During every forward pass, small chunks of model weights & KV cache are pulled into SRAM so tensor cores can perform computations. This happens for every layer & every token.
+
+2 things govern how fast inference can occur
+1) How fast can data move from HBM to SRAM
+2) How fast can tensor cores perform computations
+
+Quantisation is a technique to compress model parameters by reducing numerical precision. LLMs are typically released in brain floating 16 bit (BF16). Quantisation converts these into lower-bit formats such as FP8, INT8, INT4. Quantised weights reduce data size (in bytes) which speed up data movement. They also are faster to compute. In practice both weights & activations are quantised.
+# Memory Load 
+
+For each attention block, we have at least one KV cache. If the block implements multi-head attention with multiple Q,K matrices, then we need multiple KV heads.
+During inference, as the context length increases, the KV cache also expands.
+
+**The memory for transformer is given by:**
+
+$$2 \times \text{num\_layers} \times \text{num\_KV\_per\_layer} \times \text{head\_dim} \times \text{dtype\_bytes}$$
+
+**For a model like Llama 3 70B we have:**
+- **Num layers:** 80
+- **Num KV per layer:** 8 parallel sets of Key, Value matrices per layer - these are KV heads
+- **head dim:** The dimensions of the vectors in KV cache is 128
+- **dtype bytes:** Each number is stored in BF16 precision which takes up 2 bytes each
+
+Hence, by transformer we require 320 kB per token. Scaling this up to a 128k token context is 40 GB. Taken together we have:
+1) Model parameters holding 140 GB
+2) KV cache holds 40 GB for a single request
+
+If we serve 10 concurrent, long context uses we require 400+ GB. The KV cache lives in GPU memory, it grows linearly with the sequence length and the number of concurrent requests.
+
+# vLLM Inference Concepts
+
+vLLM implements inference optimisation techniques that make serving models less memory and compute intensive. All these techniques are used in tandem. But for pedagogical purposes, they will be presented in isolation.
+## Continuous batching
+
+**Continuous batching** is a strategy that arranges for batches of prompts to be given to the GPU in an efficient way by fully composing the data instances of the batch. The vLLM scheduler shuffles requests in and out of the batch slots between every single token generated.
+
+**Example 1**: Suppose we have a queue of multiple use requests/prompts of various lengths (in tokens) and we have a fixed number of $K$ we can process at any 1 time. Below are how many tokens we need from each request:
+  - R1: 4 tokens
+  - R2: 2 tokens
+  - R3: 1 token
+  - R4: 4 tokens
+  - R5: 3 tokens
+
+### Iteration: $T=1$
+
+  Active Batch $[R_1, R_2, R_3]$. A forward pass generates a single token for $R_1, R_2, R_3$. We notice that $R_3$ is completed and it can be evicted. The engine looks at the queue & selects $R_4$.
+
+### Iteration $T=2$
+
+  Active Batch $[R_1, R_2, R_4]$.
+
+We continue in this way until all requests have been completed. A forward pass generates a single token for $R_1, R_2, R_4$. We notice that $R_2$ is now completed and it can be evicted. The engine looks at the queue and selects $R_5$. 
+
+We continue in this way until all requests have been completed.
+
+**Note:** At inference, we don't know how many tokens are required for the request ahead of time. It was just illustrative to show how requests are evicted & new are entered.
+
+## PagedAttention 
+
+The biggest bottleneck in LLM serving is the **KV cache growth**. Instead of storing the KV cache of a single request in a continuous chunk of VRAM, PagedAttention breaks the KV cache into fixed sized blocks. 
+
+A table is created to represent each sequence and is broken into the following parts with the mapping:
+1. **Physical Blocks**: A contiguous block of VRAM that holds KV vectors for a fixed number of tokens
+2. **Logical Blocks**: A sequence is cached across multiple logical blocks which are not physically contiguous
+3. **Block Table**: A mapping between a logical block & physical blocks
+
+### Example 1: Single Request
+Let a block size contain 4 tokens and a prompt = "The cat sat on". We will generate 3 more tokens.
+
+1. **Prefill**: The user inputs "The cat sat on ". Since there are 4 tokens, we require 1 physical block. Let this be physical block 7. The KV pairs for these 4 tokens are written to physical block 7.
+
+| Logical Block | Physical Block | Slots filled |
+| :------------ | :------------- | :----------- |
+| Block 0       | Block 7        | 4/4          |
+
+2. **Decode**: The model processes the prompt and generates the next token -  "the". To generate this, the model performs an attention calculation. Paged Attention looks at block 7, fetches the KV cache & computes attention score.
+
+To store the KV vectors for token "the", we enter into a new row in the lookup table. Let this be logical block 1 and physical block 12. The vectors are saved here
+
+| Logical Block | Physical Block | Slots filled |
+|:--------------|:---------------|:-------------|
+| Block 0       | Block 7        | 4/4          |
+| Block 1       | Block 12       | 1/4          |
+
+3) To predict the next token - "mat", the PagedAttention fetches KV cached vectors from (Physical) Block 7 and Block 12 to compute attention. This vector is saved to Physical block 12 because it has space.
+
+| Logical Block | Physical Block | Slots filled |
+|:--------------|:---------------|:-------------|
+| Block 0       | Block 7        | 4/4          |
+| Block 1       | Block 12       | 2/4          |
+We continue in the same way until the entire request has been generated. After the response has been completed, this memory is freed and the blocks return to a global memory.
+
+Paged Attention enables memory sharing. If an LLM is asked to generate multiple responses from the same prompt. The prompt block (logical Block 0) can be shared across multiple requests. vLLM points to the Block Tables of all identical requests to Physical block 7/logical block 0. Only when individual generations begin to deviate do they allocate their own independent physical blocks.
+### Example 2: Multiple Different Requests
+
+Let each block hold 4 token KV cache vectors. Let the physical block IDs be $[3, 7, 9, 12, 15, 21]$.
+We receive 2 distinct requests:
+- **Request A:** 'The cat sat'
+- **Request B:** 'Artificial Intelligence is'
+
+1) Prefill Phase: Both requests are sent to model to process initial prompt tokens.
+- **Req A** has 3 tokens, it is allocated to physical block 3.
+- **Req B** has 3 tokens, it is allocated to physical block 7.
+
+**Req A:**
+
+| Logical Block | Physical Block | Slots Filled |
+| :-----------: | :------------: | :----------: |
+|    Block 0    |    Block 3     |    $3/4$     |
+
+**Req B:**
+
+| Logical Block | Physical Block | Slots Filled |
+| :-----------: | :------------: | :----------: |
+|    Block 0    |    Block 7     |    $3/4$     |
+
+2) Request A generates "on", given to its own table - Physical Block 3. Request B generates "changing", given to its own table - Physical Block 7.
+
+**Req A:**
+
+| Logical Block | Physical Block | Slots Filled |
+| :-----------: | :------------: | :----------: |
+|    Block 0    |    Block 3     |    $4/4$     |
+
+**Req B:**
+
+| Logical Block | Physical Block | Slots Filled |
+| :-----------: | :------------: | :----------: |
+|    Block 0    |    Block 7     |    $4/4$     |
+
+As we continue, each request maintains its own block table. All pulling from a global pool of Physical block memory. If a request terminates before another, for instance, if request A terminates while request B continues to decode, then the Physical blocks for request A are deallocated & reentered into global memory physical block pool. Then, the decoding for request B can reuse those physical blocks to save KV cache vectors.
+
+## Chunked Prefill
+
+This process involves breaking a large prefix prompt into smaller, fixed size chunks and co-batching them with active decode requests in the some scheduling iteration. The scheduler prioritises existing decode requests. It can best be illustrated via an example.
+
+**Example 1:** Let the number of tokens generated at each time step be $40$. Suppose there are $3$ active request, $2$ are in decode mode and the third is in prefix phase and has a length of $50$ tokens.
+### Iteration 1: $T=1$
+
+Requests A & B are in decode phase, so require a single token at this step. This leaves us with the ability to process $38$ tokens.
+
+Request C has $50$ tokens & must be prefilled into KV cache, via Paged Attention, before decoding can begin. Here we chunk the request and prefill $38/50$ tokens.
+
+### Iteration 2: $T=2$
+
+Requests A & B are in decode phase so require a single token at this step. This leaves us with the ability to process $38$ tokens.
+
+Request C has $12$ tokens Left to prefill. It completes the prefill and completes its complete initial KV cache.
+
+### Iteration 3: $T=3$
+
+Now R3 has completed prefix, all requests are in decode mode. All requests generate a single token.
+
+## Prefix Caching
+
+VLLM stores the KV cache of a shared prefix of multiple prompts in memory. When a new prompt arrives, VLLM checks if its prefix matches an existing cache. When a cache hit occurs, VLLM skips the prefix phase for that part of the prompt & immediately starts processing the new tokens.
